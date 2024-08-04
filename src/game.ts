@@ -17,6 +17,7 @@ export const initGame = (app: Application, assets: Record<string, Texture>) => {
 
   container.addChild(reels.container);
   container.addChild(spinButton.sprite);
+  container.addChild(winnings.container);
 
   reels.container.position = {
     x: (app.screen.width - REELS_WIDTH) / 2,
@@ -28,6 +29,11 @@ export const initGame = (app: Application, assets: Record<string, Texture>) => {
     y: (app.screen.height + REELS_HEIGHT + spinButton.sprite.height) / 2
   };
 
+  winnings.container.position = {
+    x: (app.screen.width - REELS_WIDTH) / 2,
+    y: (app.screen.height + REELS_HEIGHT) / 2
+  }
+
   let isSpinning = false;
 
   const handleSpin = async () => {
@@ -36,14 +42,13 @@ export const initGame = (app: Application, assets: Record<string, Texture>) => {
     }
 
     isSpinning = true;
+    winnings.clear();
     spinButton.disable();
 
     const reelPositions = await reels.spin();
-    console.log(JSON.stringify(reelPositions));
-
-    winnings.update(reelPositions);
 
     isSpinning = false;
+    winnings.update(reelPositions);
     spinButton.enable();
   }
 

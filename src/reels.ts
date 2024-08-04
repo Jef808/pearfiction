@@ -27,7 +27,7 @@ function createReel(assets: Record<string, Texture>, index: number): Reel {
   const band = REELSET[index];
   band.forEach((key, idx) => {
     const symbol = Sprite.from(assets[key]);
-    symbol.y = idx * SYMBOL_SIZE;
+    symbol.y = idx * (SYMBOL_SIZE - 1);
     symbol.setSize(SYMBOL_SIZE);
     container.addChild(symbol);
     symbols.push(symbol);
@@ -38,7 +38,7 @@ function createReel(assets: Record<string, Texture>, index: number): Reel {
   const spin = async () => {
     position = Math.floor(Math.random() * SYMBOLS_PER_REEL);
     symbols.forEach((symbol, index) => {
-      symbol.y = ((index - position + SYMBOLS_PER_REEL) % SYMBOLS_PER_REEL) * SYMBOL_SIZE;
+      symbol.y = (index - position + SYMBOLS_PER_REEL) % SYMBOLS_PER_REEL * (SYMBOL_SIZE - 1);
     });
     return position;
   }

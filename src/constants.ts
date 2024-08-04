@@ -2,7 +2,7 @@ export const SYMBOL_SIZE = 150;
 export const NUM_REELS = 5;
 export const REELS_GAP = 10;
 export const REELS_WIDTH = NUM_REELS * SYMBOL_SIZE + (NUM_REELS - 1) * REELS_GAP;
-export const REELS_HEIGHT = 3 * SYMBOL_SIZE;
+export const REELS_HEIGHT = 3 * (SYMBOL_SIZE - 1);
 export const SYMBOLS_PER_REEL = 20;
 export const BUTTON_SIZE = 120;
 

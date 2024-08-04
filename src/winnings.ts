@@ -1,3 +1,4 @@
+import {Container, Graphics, Text} from 'pixi.js';
 import {
     NUM_REELS,
     REELSET,
@@ -13,14 +14,45 @@ type WinningsData = {
     payout: number
 };
 
+const stringify = ({payline, symbol, symbolCount, payout}: WinningsData) =>
+    `- payline ${payline}, ${symbol} x${symbolCount}, ${payout}`
+
 export const createWinningsDisplay = () => {
+    const container = new Container();
+
+    const winningsText = new Text({
+        text: '',
+        style: {
+            fontFamily: 'Arial',
+            fontSize: 22,
+            fontWeight: 'bold',
+        }
+    });
+    winningsText.position = {x: 30, y: 30}
+    container.addChild(winningsText);
+
+    const updateWinningsDisplay = (winningsData: WinningsData[]) => {
+        const textPaylines = winningsData.map(stringify);
+        const totalWin = winningsData.reduce((sum, {payout}) => sum + payout, 0);
+        const text = [`Total wins: ${totalWin}`, ...textPaylines].join('\n');
+        winningsText.text = text;
+        console.log(text);
+    }
+
     const update = (reelPositions: number[]) => {
         const winningsData = calculateWinnings(reelPositions);
         winningsData && updateWinningsDisplay(winningsData);
+        return winningsData;
+    }
+
+    const clear = () => {
+        winningsText.text = '';
     }
 
     return {
-        update
+        container,
+        update,
+        clear
     };
 }
 
@@ -48,7 +80,3 @@ const calculateWinnings = (reelPositions: number[]) => {
         }
     }).filter(el => el) as WinningsData[];
 };
-
-function updateWinningsDisplay(winningsData: WinningsData[]) {
-    console.log(JSON.stringify(winningsData, null, 2));
-}
