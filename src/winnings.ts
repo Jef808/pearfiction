@@ -1,4 +1,4 @@
-import {Container, Graphics, Text} from 'pixi.js';
+import {Container, Text} from 'pixi.js';
 import {
     NUM_REELS,
     REELSET,
@@ -36,7 +36,6 @@ export const createWinningsDisplay = () => {
         const totalWin = winningsData.reduce((sum, {payout}) => sum + payout, 0);
         const text = [`Total wins: ${totalWin}`, ...textPaylines].join('\n');
         winningsText.text = text;
-        console.log(text);
     }
 
     const update = (reelPositions: number[]) => {

@@ -1,5 +1,4 @@
 import {
-  Application,
   Container,
   Texture
 } from 'pixi.js';
@@ -8,7 +7,7 @@ import {createSpinButton} from './button';
 import {createWinningsDisplay} from './winnings';
 import {REELS_HEIGHT, REELS_WIDTH} from './constants';
 
-export const initGame = (app: Application, assets: Record<string, Texture>) => {
+export const initGame = (assets: Record<string, Texture>) => {
   const container = new Container();
 
   const reels = createReels(assets);
@@ -20,18 +19,18 @@ export const initGame = (app: Application, assets: Record<string, Texture>) => {
   container.addChild(winnings.container);
 
   reels.container.position = {
-    x: (app.screen.width - REELS_WIDTH) / 2,
-    y: (app.screen.height - REELS_HEIGHT) / 2
+    x: -REELS_WIDTH / 2,
+    y: -REELS_HEIGHT / 2
   };
 
   spinButton.sprite.position = {
-    x: (app.screen.width + REELS_WIDTH - 4 * spinButton.sprite.width) / 2,
-    y: (app.screen.height + REELS_HEIGHT + spinButton.sprite.height) / 2
+    x: (REELS_WIDTH - 4 * spinButton.sprite.width) / 2,
+    y: (REELS_HEIGHT + spinButton.sprite.height) / 2
   };
 
   winnings.container.position = {
-    x: (app.screen.width - REELS_WIDTH) / 2,
-    y: (app.screen.height + REELS_HEIGHT) / 2
+    x: -REELS_WIDTH / 2,
+    y: REELS_HEIGHT / 2
   }
 
   let isSpinning = false;
