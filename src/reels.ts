@@ -16,8 +16,7 @@ import {
 
 type Reel = {
   container: Container,
-  spin: () => void,
-  getPosition: () => number
+  spin: () => Promise<number>,
 };
 
 function createReel(assets: Record<string, Texture>, index: number): Reel {
@@ -41,14 +40,12 @@ function createReel(assets: Record<string, Texture>, index: number): Reel {
     symbols.forEach((symbol, index) => {
       symbol.y = ((index - position + SYMBOLS_PER_REEL) % SYMBOLS_PER_REEL) * SYMBOL_SIZE;
     });
+    return position;
   }
-
-  const getPosition = () => position;
 
   return {
     container,
-    spin,
-    getPosition
+    spin
   };
 }
 
@@ -71,10 +68,10 @@ export function createReels(assets: Record<string, Texture>) {
 
   const spin = async () => Promise.all(
     reels.map(reel => reel.spin())
-  ).then(() => reels.map(reel => reel.getPosition()));
+  );
 
   return {
     container,
     spin
-  }
+  };
 }
