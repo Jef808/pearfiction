@@ -5,6 +5,7 @@ import {
 } from 'pixi.js';
 import {createReels} from './reels';
 import {createSpinButton} from './button';
+import {createWinningsDisplay} from './winnings';
 import {REELS_HEIGHT, REELS_WIDTH} from './constants';
 
 export const initGame = (app: Application, assets: Record<string, Texture>) => {
@@ -12,6 +13,7 @@ export const initGame = (app: Application, assets: Record<string, Texture>) => {
 
   const reels = createReels(assets);
   const spinButton = createSpinButton(assets, () => handleSpin());
+  const winnings = createWinningsDisplay();
 
   container.addChild(reels.container);
   container.addChild(spinButton.sprite);
@@ -38,6 +40,8 @@ export const initGame = (app: Application, assets: Record<string, Texture>) => {
 
     const reelPositions = await reels.spin();
     console.log(JSON.stringify(reelPositions));
+
+    winnings.update(reelPositions);
 
     isSpinning = false;
     spinButton.enable();
