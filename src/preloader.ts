@@ -41,11 +41,15 @@ export const initPreloader = (app: Application, onAssetsLoaded: OnAssetsLoadedCa
 
     assets.forEach(asset => Assets.add(asset));
 
-    Assets.load(assets.map(asset => asset.alias), (progress) => {
+    const loadAssets = Assets.load(assets.map(asset => asset.alias), (progress) => {
         const percent = Math.round(progress * 100).toString().padStart(3, ' ');
         loadingText.text = `Loading Assets... ${percent}%`;
-    }).then((loadedAssets) => {
-        app.stage.removeChild(preloaderScreen);
-        onAssetsLoaded(loadedAssets);
     });
+
+    const delay = new Promise(resolve => setTimeout(resolve, 400));
+    Promise.all([delay, loadAssets])
+        .then(([_, loadedAssets]) => {
+            app.stage.removeChild(preloaderScreen);
+            onAssetsLoaded(loadedAssets);
+        });
 };
