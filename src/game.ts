@@ -1,5 +1,6 @@
 import {
   Container,
+  Sprite,
   Texture,
   Ticker
 } from 'pixi.js';
@@ -61,6 +62,6 @@ export const initGame = (ticker: Ticker, assets: Record<string, Texture>) => {
   }
 
   return {
-    container
+    container,
   }
 }

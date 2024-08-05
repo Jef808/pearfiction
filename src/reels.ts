@@ -26,7 +26,7 @@ const lerp = (a1: number, a2: number, t: number) => a1 * (1 - t) + a2 * t;
 
 function createReel(assets: Record<string, Texture>, index: number): Reel {
   const container = new Container();
-  const symbols = [] as Sprite[];
+  const symbols = [] as Container[];
   const blur = new BlurFilter();
   blur.blurX = 0;
   blur.blurY = 0;
@@ -37,10 +37,22 @@ function createReel(assets: Record<string, Texture>, index: number): Reel {
   const band = REELSET[index];
   band.forEach((key, idx) => {
     const symbol = Sprite.from(assets[key]);
-    symbol.y = idx * (SYMBOL_SIZE - 1);
     symbol.setSize(SYMBOL_SIZE);
-    container.addChild(symbol);
-    symbols.push(symbol);
+    symbol.position = {
+      x: 1,
+      y: 1
+    }
+    const boundary = new Graphics()
+      .rect(10, SYMBOL_SIZE, SYMBOL_SIZE-20, 1)
+      .stroke(0x0055a4);
+
+    const symbolContainer = new Container();
+    symbolContainer.y = idx * (SYMBOL_SIZE - 1);
+    symbolContainer.addChild(boundary);
+    symbolContainer.addChild(symbol);
+
+    container.addChild(symbolContainer);
+    symbols.push(symbolContainer);
   });
 
   container.x = index * (SYMBOL_SIZE + REELS_GAP);
