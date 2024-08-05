@@ -1,8 +1,10 @@
 import {
+  BlurFilter,
   Container,
   Graphics,
   Sprite,
-  Texture
+  Texture,
+  Ticker
 } from 'pixi.js';
 import {
   REELSET,
@@ -16,13 +18,21 @@ import {
 
 type Reel = {
   container: Container,
-  spin: () => Promise<number>,
+  spin: (ticker: Ticker) => Promise<number>,
 };
+
+const ease = (t: number) => --t * t * (1.5 * t + 0.5) + 1;
+const lerp = (a1: number, a2: number, t: number) => a1 * (1 - t) + a2 * t;
 
 function createReel(assets: Record<string, Texture>, index: number): Reel {
   const container = new Container();
   const symbols = [] as Sprite[];
+  const blur = new BlurFilter();
+  blur.blurX = 0;
+  blur.blurY = 0;
+  container.filters = blur;
   let position = 0;
+  let prevPosition = 0;
 
   const band = REELSET[index];
   band.forEach((key, idx) => {
@@ -35,12 +45,41 @@ function createReel(assets: Record<string, Texture>, index: number): Reel {
 
   container.x = index * (SYMBOL_SIZE + REELS_GAP);
 
-  const spin = async () => {
-    position = Math.floor(Math.random() * SYMBOLS_PER_REEL);
-    symbols.forEach((symbol, index) => {
-      symbol.y = (index - position + SYMBOLS_PER_REEL) % SYMBOLS_PER_REEL * (SYMBOL_SIZE - 1);
-    });
-    return position;
+  const spin = async (ticker: Ticker) => {
+    const spinDuration = 1200 + 400 * index;
+    const startTime = Date.now();
+    const targetPosition = Math.floor(Math.random() * SYMBOLS_PER_REEL);
+    const currentPosition = targetPosition + SYMBOLS_PER_REEL / 2 % SYMBOLS_PER_REEL;
+
+    const animateSpin = () => {
+      const now = Date.now();
+      const elapsed = now - startTime;
+
+      const spinProgress = Math.min(elapsed / spinDuration, 1);
+      const easeProgress = ease(spinProgress);
+
+      position = lerp(currentPosition, targetPosition, easeProgress);
+      blur.blurY = (position - prevPosition) * 8;
+      prevPosition = position;
+
+      symbols.forEach((symbol, j) => {
+        const positionOnScreen = ((j - position + SYMBOLS_PER_REEL) % SYMBOLS_PER_REEL);
+        if (positionOnScreen > SYMBOLS_PER_REEL - 1) {
+          symbol.y = (positionOnScreen - SYMBOLS_PER_REEL) * (SYMBOL_SIZE - 1);
+        } else {
+          symbol.y = positionOnScreen * (SYMBOL_SIZE - 1);
+        }
+      });
+
+      if (elapsed >= spinDuration) {
+        ticker.remove(animateSpin);
+      }
+    };
+
+    ticker.add(animateSpin);
+
+    await new Promise(resolve => setTimeout(resolve, spinDuration));
+    return Math.round(position);
   }
 
   return {
@@ -66,8 +105,8 @@ export function createReels(assets: Record<string, Texture>) {
   container.addChild(mask);
   container.mask = mask;
 
-  const spin = async () => Promise.all(
-    reels.map(reel => reel.spin())
+  const spin = async (ticker: Ticker) => Promise.all(
+    reels.map(reel => reel.spin(ticker))
   );
 
   return {

@@ -23,7 +23,7 @@ const recenter = (screen: Container) => {
 }
 
 initPreloader(app, (assets) => {
-    const game = initGame(assets);
+    const game = initGame(app.ticker, assets);
     app.stage.addChild(game.container);
     recenter(game.container);
     window.addEventListener('resize', () => {

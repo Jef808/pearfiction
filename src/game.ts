@@ -1,13 +1,14 @@
 import {
   Container,
-  Texture
+  Texture,
+  Ticker
 } from 'pixi.js';
 import {createReels} from './reels';
 import {createSpinButton} from './button';
 import {createWinningsDisplay} from './winnings';
 import {REELS_HEIGHT, REELS_WIDTH} from './constants';
 
-export const initGame = (assets: Record<string, Texture>) => {
+export const initGame = (ticker: Ticker, assets: Record<string, Texture>) => {
   const container = new Container();
 
   const reels = createReels(assets);
@@ -44,7 +45,7 @@ export const initGame = (assets: Record<string, Texture>) => {
     winnings.clear();
     spinButton.disable();
 
-    const reelPositions = await reels.spin();
+    const reelPositions = await reels.spin(ticker);
 
     isSpinning = false;
     winnings.update(reelPositions);
