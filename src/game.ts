@@ -1,6 +1,5 @@
 import {
   Container,
-  Sprite,
   Texture,
   Ticker
 } from 'pixi.js';

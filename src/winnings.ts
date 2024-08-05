@@ -4,7 +4,8 @@ import {
   REELSET,
   PAYLINES,
   PAYTABLE,
-  SYMBOLS
+  SYMBOLS,
+  SYMBOLS_PER_REEL
 } from './constants';
 
 type WinningsData = {
@@ -59,7 +60,7 @@ const calculateWinnings = (reelPositions: number[]) => {
   const symbolsOnScreen = new Array({length: 15});
   reelPositions.forEach((pos, i) => {
     for (let j = 0; j < 3; ++j) {
-      symbolsOnScreen[i + j * NUM_REELS] = REELSET[i][pos + j]
+      symbolsOnScreen[i + j * NUM_REELS] = REELSET[i][(pos + j) % SYMBOLS_PER_REEL]
     }
   });
 

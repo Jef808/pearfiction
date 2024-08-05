@@ -85,6 +85,7 @@ function createReel(assets: Record<string, Texture>, index: number): Reel {
 
       if (elapsed >= spinDuration) {
         ticker.remove(animateSpin);
+        blur.blurY = 0;
       }
     };
 
